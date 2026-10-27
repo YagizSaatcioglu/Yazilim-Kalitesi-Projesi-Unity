@@ -5,6 +5,8 @@ public class PlayerMovement : MonoBehaviour
     private Transform playerTransform;
     private GameInput gameInput;
     private Vector2 inputVector;
+    private Vector3 moveDir;
+    private bool isWalking = false;
     void Start()
     {
         playerTransform = GetComponent<Transform>();
@@ -14,10 +16,30 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Movement();
+        PlayerWalkAnim();
+    }
+
+    private void Movement()
+    {
         //inputVector = GameInput.Instance.GetMovementVector();
         inputVector = gameInput.GetMovementVector();
         Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
-        playerTransform.position += moveDir * Time.deltaTime;
-        playerTransform.forward = Vector3.Slerp(transform.forward,moveDir,Time.deltaTime);
+        playerTransform.position += moveDir * Time.deltaTime * 3;
+
+        playerTransform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime);//player Rotation
+        isWalking = moveDir != Vector3.zero;
+
+    }
+    private void PlayerWalkAnim()
+    {
+        if (isWalking)//wakling animations
+        {
+            PlayerAnimations.Instance.WalkAnim(true);
+        }
+        else
+        {
+            PlayerAnimations.Instance.WalkAnim(false);
+        }
     }
 }
